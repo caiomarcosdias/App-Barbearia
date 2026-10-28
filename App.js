@@ -8,8 +8,8 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native
 import TelaInicial from './src/screens/TelaInicial';
 import EscolhaPro from './src/screens/EscolhaPro';
 import Servico from './src/screens/Servico';
-import DataHora from './src/screens/datahora';
-import Identificacao from './src/screens/identificação';
+import DataHora from './src/screens/DataHora';
+import Identificacao from './src/screens/identificacao';
 import Confirmacao from './src/screens/confirmacao';
 import Sucesso from './src/screens/sucesso';
 

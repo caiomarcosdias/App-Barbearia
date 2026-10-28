@@ -18,10 +18,11 @@ export default function Timeline({ etapaAtual }) {
       {etapas.map((etapa, index) => {
         const isAtiva = etapaAtual === etapa.id;
         const isConcluida = etapaAtual > etapa.id;
+        const linhaConcluida = etapaAtual > index;
 
         return (
           <React.Fragment key={etapa.id}>
-            {index > 0 && <View style={[styles.line, isConcluida && styles.lineCompleted]} />}
+            {index > 0 && <View style={[styles.line, linhaConcluida && styles.lineCompleted]} />}
 
             <TouchableOpacity 
               style={[
@@ -83,11 +84,11 @@ const styles = StyleSheet.create({
   line: {
     height: 2,
     flex: 1,
-    backgroundColor: '#ffb800',
+    backgroundColor: '#333',
     marginHorizontal: -4,
     zIndex: 1,
   },
   lineCompleted: {
-    backgroundColor: '#4cd964',
+    backgroundColor: '#ffb800', 
   },
 });

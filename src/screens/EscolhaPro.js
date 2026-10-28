@@ -16,7 +16,7 @@ export default function EscolhaPro({ navigation }) {
     const handleNextStep = () => {
     if (selectedBarber) {
       
-      navigation.navigate('Servico', { 
+      navigation.navigate('DataHora', { 
         barberId: selectedBarber.id, 
         barberName: selectedBarber.name 
       });
@@ -38,7 +38,7 @@ export default function EscolhaPro({ navigation }) {
                 isSelected={selectedBarber?.id === item.id}
                 onSelect={() => setSelectedBarber(item)}
               />
-            )}
+             )}
             style={{ width: '100%', marginTop: 20 }}
           />
 
