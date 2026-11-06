@@ -8,16 +8,18 @@ import {
   Image, 
   KeyboardAvoidingView, 
   Platform,
-  ScrollView 
+  ScrollView,
+  Alert
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Timeline from '../props/components/Timeline';
 
 export default function Identificacao({ navigation }) {
   const [nome, setNome] = useState('');
   const [celular, setCelular] = useState('');
 
-  // Função simples para aplicar máscara de telefone: (XX) XXXXX-XXXX
+  
   const handleCelularChange = (text) => {
     const limpo = text.replace(/\D/g, ''); // Remove tudo que não for número
     let formatado = limpo;
@@ -31,8 +33,27 @@ export default function Identificacao({ navigation }) {
     setCelular(formatado);
   };
 
- 
   const isFormValido = nome.trim().length > 2 && celular.replace(/\D/g, '').length === 11;
+
+  // Função para salvar no AsyncStorage e avançar
+  const handleAvancar = async () => {
+    if (!isFormValido) return;
+
+    try {
+      // Salva o celular localmente para consulta em outras telas (ex: Meus Agendamentos)
+      await AsyncStorage.setItem('@mandro_barbearia:phone', celular);
+      await AsyncStorage.setItem('@mandro_barbearia:name', nome);
+
+      // Navega para a tela de confirmação passando os parâmetros via rota
+      navigation.navigate('Confirmacao', { 
+        clienteNome: nome, 
+        clienteCelular: celular 
+      });
+    } catch (error) {
+      console.error('Erro ao salvar dados no AsyncStorage:', error);
+      Alert.alert('Erro', 'Não foi possível salvar suas informações localmente.');
+    }
+  };
 
   return (
     <SafeAreaProvider>
@@ -45,10 +66,9 @@ export default function Identificacao({ navigation }) {
            
             <Text style={styles.Titulo}>Otavio's Barbearia</Text>
 
-            
             <View style={styles.logoquadrado}>
               <Image 
-                source={require('../props\\foto_capa.jpg')} 
+                source={require('../props/foto_capa.jpg')} 
                 style={styles.logo}
                 resizeMode="cover"
               />
@@ -56,7 +76,6 @@ export default function Identificacao({ navigation }) {
 
             <Text style={styles.subTitulo}>Informe seus dados:</Text>
 
-            
             <View style={styles.inserirDados}>
               <Text style={styles.prefixo}>🇧🇷 +55</Text>
               <TextInput
@@ -70,7 +89,6 @@ export default function Identificacao({ navigation }) {
               />
             </View>
 
-            
             <View style={styles.inserirDados}>
               <TextInput
                 style={styles.input}
@@ -81,17 +99,15 @@ export default function Identificacao({ navigation }) {
               />
             </View>
 
-           
             <TouchableOpacity 
               style={[styles.botaoAvançar, !isFormValido && styles.botaoOff]}
               disabled={!isFormValido}
-              onPress={() => navigation.navigate('Confirmacao', { clienteNome: nome, clienteCelular: celular })}
+              onPress={handleAvancar}
             >
               <Text style={styles.textoBotao}>Avançar</Text>
             </TouchableOpacity>
           </ScrollView>
 
-          {}
           <Timeline etapaAtual={4} />
         </KeyboardAvoidingView>
       </SafeAreaView>

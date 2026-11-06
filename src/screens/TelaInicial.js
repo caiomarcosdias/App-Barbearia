@@ -9,6 +9,10 @@ export default function TelaInicial({ navigation }) {
   const agendarHorario = () => {
         navigation.navigate('EscolhaPro');
     }
+
+    const agendamentos = () => {
+        navigation.navigate('agendamentos');
+    }
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.containerPrincipal}>
@@ -24,6 +28,12 @@ export default function TelaInicial({ navigation }) {
         <View style={{ paddingTop: 90 }}>
           <TouchableOpacity style={styles.botao} onPress={agendarHorario}>
             <Text style={styles.textoBotao}>Agendar Horário</Text>
+          </TouchableOpacity>
+        </View>
+        
+        <View style={{ paddingTop: 1 }}>
+          <TouchableOpacity style={styles.botao} onPress={agendamentos}>
+            <Text style={styles.textoBotao}>Meus Agendamentos</Text>
           </TouchableOpacity>
         </View>
         

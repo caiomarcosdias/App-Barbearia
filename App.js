@@ -12,6 +12,7 @@ import DataHora from './src/screens/DataHora';
 import Identificacao from './src/screens/identificacao';
 import Confirmacao from './src/screens/confirmacao';
 import Sucesso from './src/screens/sucesso';
+import agendamentos from './src/screens/agendamentos';
 
 const Stack = createNativeStackNavigator();
 
@@ -31,6 +32,7 @@ export default function App() {
         <Stack.Screen name="Identificacao" component={Identificacao} />
         <Stack.Screen name="Confirmacao" component={Confirmacao} />
         <Stack.Screen name="Sucesso" component={Sucesso} />
+        <Stack.Screen name="agendamentos" component={agendamentos} />
       </Stack.Navigator>
     </NavigationContainer>
   );

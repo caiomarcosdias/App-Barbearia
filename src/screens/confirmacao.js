@@ -1,10 +1,14 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../config/firebaseConfig'; 
 import Timeline from '../props/components/Timeline';
 
 export default function Confirmacao({ route, navigation }) {
+  const [salvando, setSalvando] = useState(false);
+
   const { 
     clienteNome = 'Caio', 
     clienteCelular = '(11) 99999-9999',
@@ -14,6 +18,36 @@ export default function Confirmacao({ route, navigation }) {
     dataSelecionada = '26 de out',
     horarioSelecionado = '10:00'
   } = route.params || {};
+
+  
+  const handleConfirmarAgendamento = async () => {
+    setSalvando(true);
+    try {
+      
+      const celularLimpo = clienteCelular.replace(/\D/g, '');
+
+      
+      await addDoc(collection(db, 'agendamentos'), {
+        clienteNome: clienteNome,
+        clienteCelular: celularLimpo,
+        servico: servicoNome,
+        preco: servicoPreco,
+        duracao: servicoDuracao,
+        data: dataSelecionada,
+        horario: horarioSelecionado,
+        status: 'Confirmado',
+        criadoEm: serverTimestamp()
+      });
+
+      
+      navigation.navigate('Sucesso');
+    } catch (error) {
+      console.error('Erro ao salvar agendamento no Firestore:', error);
+      Alert.alert('Erro', 'Não foi possível concluir o agendamento. Tente novamente.');
+    } finally {
+      setSalvando(false);
+    }
+  };
 
   return (
     <SafeAreaProvider>
@@ -36,13 +70,11 @@ export default function Confirmacao({ route, navigation }) {
               </View>
 
               <View style={styles.espaco} />
-
               
               <View style={styles.linhaDetalhe}>
                 <Text style={styles.Detalhe}>Data e Horário:</Text>
                 <Text style={styles.valorDetalhe}>{dataSelecionada} às {horarioSelecionado}</Text>
               </View>
-
               
               <View style={styles.linhaDetalhe}>
                 <Text style={styles.Detalhe}>Cliente:</Text>
@@ -50,12 +82,11 @@ export default function Confirmacao({ route, navigation }) {
               </View>
 
               <View style={styles.linhaDetalhe}>
-                <Text style={styles.Detalhe}>Telemóvel:</Text>
+                <Text style={styles.Detalhe}>Telefone:</Text>
                 <Text style={styles.valorDetalhe}>{clienteCelular}</Text>
               </View>
 
               <View style={styles.espaco} />
-
               
               <View style={styles.linhaPreco}>
                 <Text style={styles.Preco}>Total a Pagar:</Text>
@@ -63,17 +94,20 @@ export default function Confirmacao({ route, navigation }) {
               </View>
             </View>
           </ScrollView>
-
           
           <TouchableOpacity 
-            style={styles.botaoConfirmar}
-            onPress={() => navigation.navigate('Sucesso')}
+            style={[styles.botaoConfirmar, salvando && styles.botaoOff]}
+            onPress={handleConfirmarAgendamento}
+            disabled={salvando}
           >
-            <Text style={styles.textobotao}>Confirmar Agendamento</Text>
+            {salvando ? (
+              <ActivityIndicator color="#121212" />
+            ) : (
+              <Text style={styles.textobotao}>Confirmar Agendamento</Text>
+            )}
           </TouchableOpacity>
         </View>
 
-       
         <Timeline etapaAtual={5} />
       </SafeAreaView>
     </SafeAreaProvider>
@@ -181,6 +215,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 10,
     marginTop: 10
+  },
+  botaoOff: {
+    backgroundColor: '#cc9600'
   },
   textobotao: { 
     color: '#121212', 
